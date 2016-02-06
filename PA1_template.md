@@ -1,11 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
-    highlight: pygments
-    theme: readable
----
+# Reproducible Research: Peer Assessment 1
 
 ##Introduction
 
@@ -31,7 +24,8 @@ We will conduct a short analysis of the data as follow:
 
 ## Loading and preprocessing the data
 
-```{r, cache=TRUE}
+
+```r
 #Loading data
 activity <- read.csv(file = unzip(zipfile = "./activity.zip"), na.strings = "NA")
 
@@ -43,45 +37,57 @@ Now our dataset is ready for analysis.
 
 ## What is mean total number of steps taken per day?
 
-```{r, cache=FALSE}
+
+```r
 # Calculate the total number of steps taken per day and store it in a data frame
 total_steps_pday <- tapply(activity_noNA$steps, factor(activity_noNA$date), sum)
 
 # Make a histogram of the total number of steps taken each day
 hist(total_steps_pday, main = "Total number of steps taken each day", xlab = "Total steps per day", col = "blue")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)\
+
+```r
 # Calculate and report the mean and median of the total number of steps taken per day
 total_mean <- mean(total_steps_pday)
 total_median <- median(total_steps_pday)
 ```
 
-The mean of the total number of steps taken per day is `r total_mean` and the median is `r total_median`.
+The mean of the total number of steps taken per day is 1.0766189\times 10^{4} and the median is 10765.
 
 ## What is the average daily activity pattern?
 
-```{r}
+
+```r
 # Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 time_series <- tapply(activity_noNA$steps, activity_noNA$interval, mean)
 plot(names(time_series), time_series, type = "l", xlab = "5-minute interval", ylab = "Average number of steps each day", main = "Average daily activity", col = "blue")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)\
+
+```r
 # Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 interval <- which.max(time_series)
 interval_max <- names(interval)
 steps_max <- round(max(time_series))
 ```
 
-The 5-minute interval that contains the maximum number of steps (on average across all the days in the dataset) is the `r interval_max`th with an average of `r steps_max` steps.
+The 5-minute interval that contains the maximum number of steps (on average across all the days in the dataset) is the 835th with an average of 206 steps.
 
 ## Imputing missing values
 
-```{r}
+
+```r
 # Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 total <- sum(is.na(activity))
 ```
 
-The total number of missing values in the dataset is `r total`.
+The total number of missing values in the dataset is 2304.
 
-```{r}
+
+```r
 # Fill in all of the missing values with the mean for that 5-minute interval across all dataset. Create a new dataset (called "activity_impNA) that is equal to the original dataset but with the missing data filled in.
 
 activity_impNA <- activity
@@ -100,15 +106,18 @@ total_median2 <- median(total_steps_pday2)
 hist(total_steps_pday2, main = "Total number of steps taken each day", xlab = "Total steps per day", col = "blue")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)\
+
 **Do these values differ from the estimates from the first part of the report? What is the impact of imputing missing data on the estimates of the total daily number of steps?**
 
-The mean of the total number of steps taken per day is `r total_mean2`. The estimate from the first part of the report was: `r total_mean`. The median is `r total_median2`, it was previously `r total_median`.
+The mean of the total number of steps taken per day is 1.0766189\times 10^{4}. The estimate from the first part of the report was: 1.0766189\times 10^{4}. The median is 1.0766189\times 10^{4}, it was previously 10765.
 
 We can see that the means are equal. This is because we imputed the mean if the corresponding 5-minute interval on missing values. Medians are very close as well.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
+
+```r
 # Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day
 week <- weekdays(strptime(activity_impNA$date, format = "%Y-%m-%d"))
 for (i in 1:length(week)){
@@ -129,3 +138,5 @@ library(lattice)
 
 xyplot(steps ~ interval | week, data = activity_final, type = "l", layout = c(1, 2), xlab = "5-minute interval", ylab = "Average number of steps")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)\
